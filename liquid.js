@@ -26,7 +26,7 @@ class Liquid {
   calculateDrag(mover) {
     // Magnitude is coefficient * speed squared
     let speed = mover.velocity.mag();
-    let dragMagnitude = this.c * speed * speed;
+    let dragMagnitude = this.c * speed;
 
     // Direction is inverse of velocity
     let dragForce = mover.velocity.copy();
