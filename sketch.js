@@ -2,38 +2,59 @@
 // Daniel Shiffman
 // http://natureofcode.com
 
-let mover;
+// Forces (Gravity and Fluid Resistence) with Vectors
+
+// Demonstration of multiple force acting on bodies (Mover class)
+// Bodies experience gravity continuously
+// Bodies experience fluid resistance when in "water"
+
+// Five moving bodies
+let movers = [];
+
+// Liquid
+let liquid;
 
 function setup() {
   createCanvas(640, 240);
-  mover = new Mover(width / 2, 30, 5);
-  createP('Click mouse to apply wind force.');
+  reset();
+  // Create liquid object
+  liquid = new Liquid(0, height / 2, width, height / 2, 0.1);
 }
 
 function draw() {
   background(255);
 
-  let gravity = createVector(0, 1);
-  //{!1} I should scale by mass to be more accurate, but this example only has one circle
-  mover.applyForce(gravity);
+  // Draw liquid
+  liquid.show();
 
-  if (mouseIsPressed) {
-    let wind = createVector(0.5, 0);
-    mover.applyForce(wind);
+  for (let i = 0; i < movers.length; i++) {
+    // Is the Mover in the liquid?
+    if (liquid.contains(movers[i])) {
+      // Calculate drag force
+      let dragForce = liquid.calculateDrag(movers[i]);
+      // Apply drag force to Mover
+      movers[i].applyForce(dragForce);
+    }
+
+    // Gravity is scaled by mass here!
+    let gravity = createVector(0, 0.1 * movers[i].mass);
+    // Apply gravity
+    movers[i].applyForce(gravity);
+
+    // Update and display
+    movers[i].update();
+    movers[i].show();
+    movers[i].checkEdges();
   }
+}
 
-  if (mover.contactEdge()) {
-    //{!5 .bold}
-    let c = 0.5;
-    let friction = mover.velocity.copy();
-    friction.mult(-1);
-    friction.setMag(c);
+function mousePressed() {
+  reset();
+}
 
-    //{!1 .bold} Apply the friction force vector to the object.
-    mover.applyForce(friction);
+// Restart all the Mover objects randomly
+function reset() {
+  for (let i = 0; i < 9; i++) {
+    movers[i] = new Mover(40 + i * 70, 0, random(0.5, 3));
   }
-
-  mover.bounceEdges();
-  mover.update();
-  mover.show();
 }
