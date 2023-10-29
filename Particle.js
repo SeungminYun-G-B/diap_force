@@ -37,7 +37,7 @@ class Mover {
   bounceEdges() {
     // A new variable to simulate an inelastic collision
     // 10% of the velocity's x or y component is lost
-    let bounce = -0.9;
+    let bounce = -0.5;
     if (this.position.x > width - this.radius) {
       this.position.x = width - this.radius;
       this.velocity.x *= bounce;
